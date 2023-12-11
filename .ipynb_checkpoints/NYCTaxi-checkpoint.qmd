@@ -6,7 +6,6 @@ execute:
   enabled: true
   cache: false
   freeze: false
-  error: true
 ---
 
 ```{python}
@@ -17,12 +16,12 @@ import plotly.io as pio
 pd.options.plotting.backend = "plotly"
 pio.templates.default = "plotly_white"
 df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYCTaxi.csv").assign(
-    log_trip_duration = np.log(df.trip_duration),
-    pickup_datetime = df.pickup_datetime.apply(pd.to_datetime),
-    dropoff_datetime = df.dropoff_datetime.apply(pd.to_datetime),
-    dist = np.sqrt((df.pickup_latitude-df.dropoff_latitude)**2 + (df.pickup_longitude-df.dropoff_longitude)**2),
+    log_trip_duration = lambda df: np.log(df.trip_duration),
+    pickup_datetime = lambda df: df.pickup_datetime.apply(pd.to_datetime),
+    dropoff_datetime = lambda df: df.dropoff_datetime.apply(pd.to_datetime),
+    dist = lambda df: np.sqrt((df.pickup_latitude-df.dropoff_latitude)**2 + (df.pickup_longitude-df.dropoff_longitude)**2),
     #---#
-    vendor_id = df.vendor_id.map({1:'A',2:'B'})
+    vendor_id = lambda df: df.vendor_id.map({1:'A',2:'B'})
 ).assign(
     speed = lambda df: df.dist / df.trip_duration,
     pickup_hour = lambda df: df.pickup_datetime.dt.hour,
